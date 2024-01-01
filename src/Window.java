@@ -6,13 +6,25 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 public class Window extends JFrame {
+    JButton b3 = new JButton("CLOSE");
+
+    b3.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent  e;
+        e)
+        {
+            System.exit(0);
+        }
+    };
     ButtonGroupManager buttonGroupManager;
     private String iconPath = "image\\stonksViewerIcon.png";
-    Color themeColor = new Color(44, 27, 71);
-    int cornerRadius = 25;
+    Color themeColor = new Color(76, 64, 66);
+    int cornerRadius = 10;
     public static int yWindowMoveThreshold = 25;
     private Window instance;
     int mousePressX = 0, mousePressY = 0;
