@@ -2,35 +2,23 @@ import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.event.ActionEvent;
 import java.awt.event.*;
-import java.awt.event.ActionListener;
+import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 
 public class Window extends JFrame {
-    JButton b3 = new JButton("CLOSE");
 
-    b3.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent  e;
-        e)
-        {
-            System.exit(0);
-        }
-    };
     ButtonGroupManager buttonGroupManager;
     private String iconPath = "image\\stonksViewerIcon.png";
-    Color themeColor = new Color(76, 64, 66);
-    int cornerRadius = 10;
+    Color themeColor = new Color(44, 27, 71);
+    int cornerRadius = 25;
     public static int yWindowMoveThreshold = 25;
     private Window instance;
     int mousePressX = 0, mousePressY = 0;
     public Window(String name) {
         buttonGroupManager = new ButtonGroupManager();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(null);
         this.setUndecorated(true);
         this.setTitle(name);
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource(iconPath)));
@@ -93,6 +81,42 @@ public class Window extends JFrame {
         group.add(radio);
         this.add(radio);
         return group;
+    }
+    public void addMinimizeButton(String text, Bound bound) {
+        JButton button = new JButton(text);
+        button.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {setState(Frame.ICONIFIED);
+            }
+        });
+        button.setBounds(bound.toRect());
+        this.add(button);
+    }
+    public void addMaximizeButton(String text, Bound bound) {
+        JButton button = new JButton(text);
+        button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Maximize the frame
+                    setExtendedState(JFrame.MAXIMIZED_BOTH);
+                }
+            });
+        button.setBounds(bound.toRect());
+        this.add(button);
+
+    }
+    public void addCloseButton(String text, Bound bound) {
+        JButton button = new JButton(text);
+        button.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        button.setBounds(bound.toRect());
+        this.add(button);
     }
 
     /**
