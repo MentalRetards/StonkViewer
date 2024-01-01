@@ -12,7 +12,8 @@ public class Window extends JFrame {
     private String iconPath = "image\\stonksViewerIcon.png";
     Color themeColor = new Color(44, 27, 71);
     int cornerRadius = 25;
-    public static int yWindowMoveThreshold = 25;
+    private Dimension unMaximizedSize;
+    public static int yWindowMoveThreshold = 40;
     private Window instance;
     int mousePressX = 0, mousePressY = 0;
     public Window(String name) {
@@ -28,6 +29,12 @@ public class Window extends JFrame {
         initDecorations();
     }
     public void initDecorations() {
+
+        addCloseButton("X", new Bound(950, 10, 40, 29));
+        addMaximizeButton("O", new Bound(905, 10, 40, 29));
+        addMinimizeButton("-", new Bound(860, 10, 40, 29));
+
+        //Logic to allow dragging and moving of the window
         this.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
                 mousePressX = me.getX();
@@ -36,7 +43,8 @@ public class Window extends JFrame {
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent me) {
-                if (!(mousePressY <= yWindowMoveThreshold)) return;
+                //return if the mouse is lower than the move threshold or if the screen is maximized or else
+                if (!(mousePressY <= yWindowMoveThreshold) || getExtendedState() != JFrame.NORMAL) return;
                 instance.setLocation(instance.getLocation().x + (me.getX() - mousePressX), instance.getLocation().y + (me.getY() - mousePressY));
             }
         });
@@ -63,16 +71,38 @@ public class Window extends JFrame {
         setStyling(box);
         this.add(box);
     }
+    //Overrides superclass in order to log the size for resetting after unMaximizing
+    @Override
+    public void setSize(int width, int height) {
+        this.setMaximumSize(this.getToolkit().getScreenSize());
+        this.unMaximizedSize = new Dimension(width, height);
+        super.setSize(width, height);
+    }
+    @Override
+    public void setSize(Dimension dimension) {
+        this.setMaximumSize(this.getToolkit().getScreenSize());
+        this.unMaximizedSize = dimension;
+        super.setSize(dimension);
+    }
     public void addButton(String text, Bound bound) {
         JButton button = new JButton(text);
         button.setBounds(bound.toRect());
         setStyling(button);
         this.add(button);
     }
+    public void IhateMyLife() {
+
+    }
     public void init() {
+        Dimension screen = this.getToolkit().getScreenSize();
+        this.setSize(10000, 10000);
         this.setLayout(null);
-        this.setVisible(true);
         this.setShape(new RoundRectangle2D.Float(0, 0, this.getWidth(), this.getHeight(), cornerRadius, cornerRadius));
+        unMaximizedSize = new Dimension(1000, 700);
+        maximize();
+        unMaximize();
+        this.setLocation(screen.width / 2 - this.getWidth() / 2, screen.height / 2 - this.getHeight() / 2);
+        this.setVisible(true);
     }
     public ButtonGroupID addRadio(String optionName, Bound bound, ButtonGroupID group) {
         JRadioButton radio = new JRadioButton(optionName);
@@ -83,31 +113,55 @@ public class Window extends JFrame {
         return group;
     }
     public void addMinimizeButton(String text, Bound bound) {
-        JButton button = new JButton(text);
+        JButton button = new JButton();
         button.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {setState(Frame.ICONIFIED);
             }
         });
-        button.setBounds(bound.toRect());
-        this.add(button);
+        addSpecialButton(button, text, bound);
     }
     public void addMaximizeButton(String text, Bound bound) {
-        JButton button = new JButton(text);
-        button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // Maximize the frame
-                    setExtendedState(JFrame.MAXIMIZED_BOTH);
-                }
-            });
-        button.setBounds(bound.toRect());
-        this.add(button);
+        JButton button = new JButton();
+        button.addActionListener(e -> {
+            //Look at the current state of the screen and either call maximize or unMaximize
+            if (instance.getExtendedState() == JFrame.NORMAL)
+                maximize();
+            else
+                unMaximize();
+        });
+        addSpecialButton(button, text, bound);
 
     }
+    public void maximize() {
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
+    public void unMaximize() {
+        Dimension screen = this.getToolkit().getScreenSize();
+        super.setSize(unMaximizedSize);
+        this.setLocation(screen.width / 2 - this.getWidth() / 2, screen.height / 2 - this.getHeight() / 2);
+        setExtendedState(JFrame.NORMAL);
+    }
+    public void addSpecialButton(JButton button, String text, Bound bound) {
+        button.setBounds(bound.toRect());
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        setBackground(button);
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Default", Font.BOLD, 20));
+        JPanel panel = new JPanel();
+        panel.add(label);
+        panel.add(button);
+        panel.setBounds(bound.toRect());
+        panel.setComponentZOrder(label, panel.getComponentCount() - 1);
+        setBackground(panel);
+        this.add(panel);
+        this.add(button);
+    }
     public void addCloseButton(String text, Bound bound) {
-        JButton button = new JButton(text);
+        JButton button = new JButton();
         button.addActionListener(new ActionListener() {
 
             @Override
@@ -115,8 +169,7 @@ public class Window extends JFrame {
                 System.exit(0);
             }
         });
-        button.setBounds(bound.toRect());
-        this.add(button);
+        addSpecialButton(button, text, bound);
     }
 
     /**

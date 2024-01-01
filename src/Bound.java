@@ -7,7 +7,7 @@ public class Bound {
     int height;
     public Bound (int x, int y, int width, int height) {
         this.x = x;
-        this.y = y + Window.yWindowMoveThreshold;
+        this.y = y;
         this.width = width;
         this.height = height;
     }
