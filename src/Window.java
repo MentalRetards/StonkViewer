@@ -2,9 +2,7 @@ import jdk.jshell.execution.Util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 
@@ -81,6 +79,20 @@ public class Window extends JFrame {
         group.add(radio);
         this.add(radio);
         return group;
+    }
+    public void addCloseButton(String text, Bound bound) {
+        JButton button = new JButton(text);
+        button.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        button.setBounds(bound.toRect());
+        setStyling(button);
+        button.setFont(new Font("Serif", Font.BOLD, 8));
+        this.add(button);
     }
 
     /**

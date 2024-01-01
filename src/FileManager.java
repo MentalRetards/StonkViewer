@@ -19,6 +19,7 @@ public class FileManager {
     public ProfileFileManager getSelectedProfile() {
         return this.selectedProfile;
     }
+
     public void saveToConfig(Field field, String value) {
         FileHandler.replaceFileLine(config, field.getField() + ":" + value, field.getLine());
         configStr = FileHandler.readFromFile(config);
@@ -30,6 +31,9 @@ public class FileManager {
         }
         return null;
     }
+    public List<ProfileFileManager> getProfiles() {
+        return profiles;
+    }
     public void selectProfile(String name) {
         selectProfile(getProfileFromName(name));
     }
@@ -38,6 +42,7 @@ public class FileManager {
         this.selectedProfile = profile;
     }
     public void initConfig(File config) {
+
         configStr = FileHandler.readFromFile(config);
         String str = findFieldFromConfig(Field.PROFILE.getField());
         if (str == null) {
